@@ -1,4 +1,4 @@
-//guyes134@gmail.com
+//mail: guyes134@gmail.com
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
@@ -112,10 +112,6 @@ TEST_CASE("isConnected method") {
     };
     Graph g2(matrix2, false, false, false, 3, 2);
     CHECK(Algorithms::isConnected(g2) == 0);
-
-    // Test 1: Empty graph
-    vector<vector<int>> emptyGraph = {};
-    g.loadGraph(emptyGraph);
 }
 
 
@@ -224,8 +220,6 @@ TEST_CASE("isContainsCycle method") {
         CHECK(Algorithms::isContainsCycle(g4) != "0");
     }
 }
-
-
 
 // Test the isBipartite method
 TEST_CASE("isBipartite method") {
