@@ -1,4 +1,4 @@
-//guyes134@gmail.com
+//mail: guyes134@gmail.com
 
 #pragma once
 
@@ -26,6 +26,7 @@ public:
     //constructors
     Graph();
     Graph(std::vector<std::vector<int>> matrix, bool direction, bool negWeight, bool weight, int veNum, int edgNum);
+    ~Graph();
 
     int getVertexNum() const{
         return this->vertexNum;
@@ -49,4 +50,5 @@ public:
     bool getHasNegEdges() const{
         return hasNegWeight;
     }
-};
+
+    bool isTheSameSize(const Graph& graph) const;
