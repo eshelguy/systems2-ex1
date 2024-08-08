@@ -1,4 +1,4 @@
-//guyes134@gmail.com
+//mail: guyes134@gmail.com
 
 #include "Algorithms.hpp"
 #include "Graph.hpp"
@@ -35,7 +35,7 @@ void Algorithms::DFS(Graph g, int v, std::vector<bool> &visited) {
 }
 
 
-std::string BFSShortestPath(const Graph &g, int start, int end) {
+std::string Algorithms::BFSShortestPath(const Graph &g, int start, int end) {
     std::stringstream ss;
     if (start == end) {
         ss << start; // Same vertex, just print the vertex
@@ -95,7 +95,7 @@ std::string BFSShortestPath(const Graph &g, int start, int end) {
     return ss.str();
 }
 
-std::string DijkstraShortestPath(const Graph &g, int start, int end) {
+std::string Algorithms::DijkstraShortestPath(const Graph &g, int start, int end) {
     std::stringstream ss;
     if (start == end) {
         ss << start; // Same vertex, just print the vertex
@@ -157,15 +157,81 @@ std::string DijkstraShortestPath(const Graph &g, int start, int end) {
     return ss.str();
 }
 
+std::string Algorithms::BellmanFordShortestPath(const Graph &g, int start, int end) {
+    std::stringstream ss;
+    int vertexNum = g.getVertexNum();
+    const int INF = std::numeric_limits<int>::max();
+
+    if (vertexNum == 0 || start >= vertexNum || end >= vertexNum) {
+        return "-1";
+    }
+
+    std::vector<int> dist(vertexNum, INF);
+    std::vector<int> parent(vertexNum, -1);
+    dist[start] = 0;
+
+    // Relax all edges |V|-1 times
+    for (int i = 0; i < vertexNum - 1; ++i) {
+        for (int u = 0; u < vertexNum; ++u) {
+            for (int v = 0; v < vertexNum; ++v) {
+                int weight = g.getAdjacencyMatrix()[u][v];
+                if (weight != 0 && dist[u] != INF && dist[u] + weight < dist[v]) {
+                    dist[v] = dist[u] + weight;
+                    parent[v] = u;
+                }
+            }
+        }
+    }
+
+    // Check for negative weight cycles
+    for (int u = 0; u < vertexNum; ++u) {
+        for (int v = 0; v < vertexNum; ++v) {
+            int weight = g.getAdjacencyMatrix()[u][v];
+            if (weight != 0 && dist[u] != INF && dist[u] + weight < dist[v]) {
+                // Negative weight cycle found
+                return "Negative cycle detected";
+            }
+        }
+    }
+
+    if (dist[end] == INF) {
+        return "-1"; // No path found
+    }
+
+    // Reconstruct the path
+    std::stack<int> path;
+    int currVertex = end;
+    while (currVertex != -1) {
+        path.push(currVertex);
+        currVertex = parent[currVertex];
+    }
+
+    // Print the path
+    while (!path.empty()) {
+        ss << path.top();
+        path.pop();
+        if (!path.empty()) {
+            ss << "->";
+        }
+    }
+    return ss.str();
+}
+
 std::string Algorithms::shortestPath(const Graph &g, int start, int end) {
+
     if (g.getIsWeighted()) {
         return DijkstraShortestPath(g, start, end);
-    } else {
+    }
+    else if (g.getHasNegEdges()) {
+        return BellmanFordShortestPath(g, start, end);
+    }
+    else {
         return BFSShortestPath(g, start, end);
     }
 }
 
-bool DFSUtil(const Graph &g, int v, std::vector<bool> &visited, std::vector<int> &parent, int &cycleStart, int &cycleEnd) {
+
+bool Algorithms::DFSUtil(const Graph &g, int v, std::vector<bool> &visited, std::vector<int> &parent, int &cycleStart, int &cycleEnd) {
     visited[v] = true;
 
     for (int i = 0; i < g.getVertexNum(); ++i) {
@@ -216,14 +282,11 @@ std::string Algorithms::isContainsCycle(const Graph &g) {
                 cycleStream << "->";
             }
         }
-
         return cycleStream.str();
     }
 }
 
-
-
-bool BFSUtil(const Graph &g, int src, std::vector<int> &colors, std::vector<int> &setA, std::vector<int> &setB) {
+bool Algorithms::BFSUtil(const Graph &g, int src, std::vector<int> &colors, std::vector<int> &setA, std::vector<int> &setB) {
     std::queue<int> q;
     q.push(src);
     colors[src] = 1; // Start coloring the source vertex with color 1
@@ -283,7 +346,6 @@ std::string Algorithms::isBipartite(const Graph &g) {
 
     return result.str();
 }
-
 
 std::string Algorithms::negativeCycle(const Graph &g) {
     std::stringstream ss;
