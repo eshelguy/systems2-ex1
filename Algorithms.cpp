@@ -11,6 +11,8 @@
 
 using namespace std;
 
+// Checks if the graph is connected using Depth-First Search (DFS).
+// Returns 1 if connected, 0 otherwise.
 int Algorithms::isConnected(const Graph &g) {
    if (g.getVertexNum() == 0){
        return 0;
@@ -25,6 +27,26 @@ int Algorithms::isConnected(const Graph &g) {
    return 1;
 }
 
+// Function to relax all edges |V|-1 times in a graph.
+// Updates the distance and parent vectors.
+void Algorithms::relaxEdges(const Graph &g, std::vector<int> &dist, std::vector<int> &parent) {
+    int V = g.getVertexNum();
+    std::vector<std::vector<int>> matrix = g.getAdjacencyMatrix();
+    const int INF = std::numeric_limits<int>::max();
+
+    for (int i = 1; i <= V - 1; ++i) {
+        for (int u = 0; u < V; ++u) {
+            for (int v = 0; v < V; ++v) {
+                if (matrix[u][v] != 0 && dist[u] != INF && dist[u] + matrix[u][v] < dist[v]) {
+                    dist[v] = dist[u] + matrix[u][v];
+                    parent[v] = u;
+                }
+            }
+        }
+    }
+}
+
+// Helper function for Depth-First Search (DFS) to mark visited vertices.
 void Algorithms::DFS(Graph g, int v, std::vector<bool> &visited) {
     visited[v] = true;
     for (int i = 0; i < g.getVertexNum(); ++i) {
@@ -34,7 +56,8 @@ void Algorithms::DFS(Graph g, int v, std::vector<bool> &visited) {
     }
 }
 
-
+// Finds the shortest path using Breadth-First Search (BFS) from start to end.
+// Returns the path as a string or "-1" if no path exists.
 std::string Algorithms::BFSShortestPath(const Graph &g, int start, int end) {
     std::stringstream ss;
     if (start == end) {
@@ -95,6 +118,8 @@ std::string Algorithms::BFSShortestPath(const Graph &g, int start, int end) {
     return ss.str();
 }
 
+// Finds the shortest path using Dijkstra's algorithm from start to end.
+// Returns the path as a string or "-1" if no path exists.
 std::string Algorithms::DijkstraShortestPath(const Graph &g, int start, int end) {
     std::stringstream ss;
     if (start == end) {
@@ -157,6 +182,8 @@ std::string Algorithms::DijkstraShortestPath(const Graph &g, int start, int end)
     return ss.str();
 }
 
+// Finds the shortest path using the Bellman-Ford algorithm from start to end.
+// Returns the path as a string or "-1" if no path exists or "Negative cycle detected" if a negative cycle is found.
 std::string Algorithms::BellmanFordShortestPath(const Graph &g, int start, int end) {
     std::stringstream ss;
     int vertexNum = g.getVertexNum();
@@ -170,18 +197,8 @@ std::string Algorithms::BellmanFordShortestPath(const Graph &g, int start, int e
     std::vector<int> parent(vertexNum, -1);
     dist[start] = 0;
 
-    // Relax all edges |V|-1 times
-    for (int i = 0; i < vertexNum - 1; ++i) {
-        for (int u = 0; u < vertexNum; ++u) {
-            for (int v = 0; v < vertexNum; ++v) {
-                int weight = g.getAdjacencyMatrix()[u][v];
-                if (weight != 0 && dist[u] != INF && dist[u] + weight < dist[v]) {
-                    dist[v] = dist[u] + weight;
-                    parent[v] = u;
-                }
-            }
-        }
-    }
+    // Relax all edges
+    relaxEdges(g, dist, parent);
 
     // Check for negative weight cycles
     for (int u = 0; u < vertexNum; ++u) {
@@ -217,20 +234,25 @@ std::string Algorithms::BellmanFordShortestPath(const Graph &g, int start, int e
     return ss.str();
 }
 
+// Determines the shortest path from start to end using the appropriate algorithm
+// based on the presence of negative weights and whether the graph is weighted.
 std::string Algorithms::shortestPath(const Graph &g, int start, int end) {
-
-    if (g.getIsWeighted()) {
-        return DijkstraShortestPath(g, start, end);
+    if(start >= g.getVertexNum() || end >= g.getVertexNum()){
+        return "-1";
     }
     else if (g.getHasNegEdges()) {
         return BellmanFordShortestPath(g, start, end);
+    }
+    else if (g.getIsWeighted()) {
+        return DijkstraShortestPath(g, start, end);
     }
     else {
         return BFSShortestPath(g, start, end);
     }
 }
 
-
+// Utility function for Depth-First Search (DFS) to detect cycles in a graph.
+// Returns true if a cycle is found, false otherwise.
 bool Algorithms::DFSUtil(const Graph &g, int v, std::vector<bool> &visited, std::vector<int> &parent, int &cycleStart, int &cycleEnd) {
     visited[v] = true;
 
@@ -250,6 +272,8 @@ bool Algorithms::DFSUtil(const Graph &g, int v, std::vector<bool> &visited, std:
     return false;
 }
 
+// Checks if the graph contains a cycle using Depth-First Search (DFS).
+// Returns the cycle as a string or "0" if no cycle is found.
 std::string Algorithms::isContainsCycle(const Graph &g) {
     std::vector<bool> visited(g.getVertexNum(), false);
     std::vector<int> parent(g.getVertexNum(), -1);
@@ -286,6 +310,8 @@ std::string Algorithms::isContainsCycle(const Graph &g) {
     }
 }
 
+// Utility function for Breadth-First Search (BFS) to check if the graph is bipartite.
+// Colors the graph and returns true if bipartite, false otherwise.
 bool Algorithms::BFSUtil(const Graph &g, int src, std::vector<int> &colors, std::vector<int> &setA, std::vector<int> &setB) {
     std::queue<int> q;
     q.push(src);
@@ -315,6 +341,10 @@ bool Algorithms::BFSUtil(const Graph &g, int src, std::vector<int> &colors, std:
     return true;
 }
 
+
+
+// Checks if the graph is bipartite using Breadth-First Search (BFS).
+// Returns the sets as a string or "0" if not bipartite.
 std::string Algorithms::isBipartite(const Graph &g) {
     std::vector<int> colors(g.getVertexNum(), -1); // Initialize all vertices as not colored
     std::vector<int> setA, setB;
@@ -347,6 +377,8 @@ std::string Algorithms::isBipartite(const Graph &g) {
     return result.str();
 }
 
+// Checks for the presence of negative weight cycles using the Bellman-Ford algorithm.
+// Returns the cycle as a string or "0" if no cycle is found.
 std::string Algorithms::negativeCycle(const Graph &g) {
     std::stringstream ss;
     int V = g.getVertexNum();
@@ -361,17 +393,8 @@ std::string Algorithms::negativeCycle(const Graph &g) {
         return "0";
     }
 
-    // Relax all edges |V|-1 times
-    for (int i = 1; i <= V - 1; ++i) {
-        for (int u = 0; u < V; ++u) {
-            for (int v = 0; v < V; ++v) {
-                if (matrix[u][v] != 0 && dist[u] != INF && dist[u] + matrix[u][v] < dist[v]) {
-                    dist[v] = dist[u] + matrix[u][v];
-                    parent[v] = u;
-                }
-            }
-        }
-    }
+    // Relax all edges
+    relaxEdges(g, dist, parent);
 
     // Check for negative weight cycles
     for (int u = 0; u < V; ++u) {
