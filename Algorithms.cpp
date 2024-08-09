@@ -11,24 +11,39 @@
 
 using namespace std;
 
-// Checks if the graph is connected using Depth-First Search (DFS).
-// Returns 1 if connected, 0 otherwise.
+/**
+ * @brief Checks if the graph is connected using Depth-First Search (DFS).
+ *
+ * This function performs a DFS starting from the first vertex and marks all reachable vertices.
+ * If all vertices are visited, the graph is considered connected.
+ *
+ * @param g The graph to be checked.
+ * @return int Returns 1 if the graph is connected, 0 otherwise.
+ */
 int Algorithms::isConnected(const Graph &g) {
-   if (g.getVertexNum() == 0){
-       return 0;
-   }
-   std::vector<bool> visited(g.getVertexNum(), false);
-   Algorithms::DFS(g, 0, visited);
-   for (bool v : visited){
-       if (!v){
-           return 0;
-       }
-   }
-   return 1;
+    if (g.getVertexNum() == 0){
+        return 0;
+    }
+    std::vector<bool> visited(g.getVertexNum(), false);
+    Algorithms::DFS(g, 0, visited);
+    for (bool v : visited){
+        if (!v){
+            return 0;
+        }
+    }
+    return 1;
 }
 
-// Function to relax all edges |V|-1 times in a graph.
-// Updates the distance and parent vectors.
+/**
+ * @brief Function to relax all edges |V|-1 times in a graph.
+ *
+ * This function updates the distance and parent vectors by relaxing all the edges in the graph.
+ * It is used in the Bellman-Ford and other shortest path algorithms.
+ *
+ * @param g The graph containing the edges.
+ * @param dist The distance vector that will be updated.
+ * @param parent The parent vector that will be updated to reconstruct paths.
+ */
 void Algorithms::relaxEdges(const Graph &g, std::vector<int> &dist, std::vector<int> &parent) {
     int V = g.getVertexNum();
     std::vector<std::vector<int>> matrix = g.getAdjacencyMatrix();
@@ -46,7 +61,15 @@ void Algorithms::relaxEdges(const Graph &g, std::vector<int> &dist, std::vector<
     }
 }
 
-// Helper function for Depth-First Search (DFS) to mark visited vertices.
+/**
+ * @brief Helper function for Depth-First Search (DFS) to mark visited vertices.
+ *
+ * This function performs a DFS from a given vertex, marking all reachable vertices as visited.
+ *
+ * @param g The graph to be searched.
+ * @param v The current vertex in the DFS.
+ * @param visited A vector tracking which vertices have been visited.
+ */
 void Algorithms::DFS(Graph g, int v, std::vector<bool> &visited) {
     visited[v] = true;
     for (int i = 0; i < g.getVertexNum(); ++i) {
@@ -56,8 +79,16 @@ void Algorithms::DFS(Graph g, int v, std::vector<bool> &visited) {
     }
 }
 
-// Finds the shortest path using Breadth-First Search (BFS) from start to end.
-// Returns the path as a string or "-1" if no path exists.
+/**
+ * @brief Finds the shortest path using Breadth-First Search (BFS) from start to end.
+ *
+ * This function finds the shortest path in an unweighted graph by exploring all nodes at the current depth level before moving on to nodes at the next depth level.
+ *
+ * @param g The graph in which the path is to be found.
+ * @param start The starting vertex.
+ * @param end The ending vertex.
+ * @return std::string The shortest path from start to end as a string in the format "0->1->2". Returns "-1" if no path exists.
+ */
 std::string Algorithms::BFSShortestPath(const Graph &g, int start, int end) {
     std::stringstream ss;
     if (start == end) {
@@ -118,8 +149,16 @@ std::string Algorithms::BFSShortestPath(const Graph &g, int start, int end) {
     return ss.str();
 }
 
-// Finds the shortest path using Dijkstra's algorithm from start to end.
-// Returns the path as a string or "-1" if no path exists.
+/**
+ * @brief Finds the shortest path using Dijkstra's algorithm from start to end.
+ *
+ * This function finds the shortest path in a weighted graph with non-negative weights using Dijkstra's algorithm.
+ *
+ * @param g The graph in which the path is to be found.
+ * @param start The starting vertex.
+ * @param end The ending vertex.
+ * @return std::string The shortest path from start to end as a string in the format "0->1->2". Returns "-1" if no path exists.
+ */
 std::string Algorithms::DijkstraShortestPath(const Graph &g, int start, int end) {
     std::stringstream ss;
     if (start == end) {
@@ -182,8 +221,17 @@ std::string Algorithms::DijkstraShortestPath(const Graph &g, int start, int end)
     return ss.str();
 }
 
-// Finds the shortest path using the Bellman-Ford algorithm from start to end.
-// Returns the path as a string or "-1" if no path exists or "Negative cycle detected" if a negative cycle is found.
+/**
+ * @brief Finds the shortest path using the Bellman-Ford algorithm from start to end.
+ *
+ * This function finds the shortest path in a graph that may have negative weights using the Bellman-Ford algorithm.
+ * It also detects negative weight cycles.
+ *
+ * @param g The graph in which the path is to be found.
+ * @param start The starting vertex.
+ * @param end The ending vertex.
+ * @return std::string The shortest path from start to end as a string in the format "0->1->2". Returns "-1" if no path exists or "Negative cycle detected" if a negative cycle is found.
+ */
 std::string Algorithms::BellmanFordShortestPath(const Graph &g, int start, int end) {
     std::stringstream ss;
     int vertexNum = g.getVertexNum();
@@ -234,8 +282,20 @@ std::string Algorithms::BellmanFordShortestPath(const Graph &g, int start, int e
     return ss.str();
 }
 
-// Determines the shortest path from start to end using the appropriate algorithm
-// based on the presence of negative weights and whether the graph is weighted.
+/**
+ * @brief Determines the shortest path from start to end using the appropriate algorithm
+ * based on the presence of negative weights and whether the graph is weighted.
+ *
+ * This function selects the appropriate shortest path algorithm based on the properties of the graph:
+ * - Uses Bellman-Ford if the graph has negative weights.
+ * - Uses Dijkstra if the graph is weighted but has no negative weights.
+ * - Uses BFS if the graph is unweighted.
+ *
+ * @param g The graph in which the path is to be found.
+ * @param start The starting vertex.
+ * @param end The ending vertex.
+ * @return std::string The shortest path from start to end as a string in the format "0->1->2". Returns "-1" if no path exists.
+ */
 std::string Algorithms::shortestPath(const Graph &g, int start, int end) {
     if(start >= g.getVertexNum() || end >= g.getVertexNum()){
         return "-1";
@@ -251,8 +311,21 @@ std::string Algorithms::shortestPath(const Graph &g, int start, int end) {
     }
 }
 
-// Utility function for Depth-First Search (DFS) to detect cycles in a graph.
-// Returns true if a cycle is found, false otherwise.
+/**
+ * @brief Utility function for Depth-First Search (DFS) to detect cycles in a graph.
+ *
+ * This function helps detect cycles by recursively visiting nodes and tracking their parents.
+ * If a back edge (an edge that points to one of the node's ancestors in the DFS tree) is found,
+ * a cycle exists in the graph.
+ *
+ * @param g The graph to be checked.
+ * @param v The current vertex being visited.
+ * @param visited A vector tracking which vertices have been visited.
+ * @param parent A vector tracking the parent of each vertex.
+ * @param cycleStart Reference to the starting vertex of the detected cycle.
+ * @param cycleEnd Reference to the ending vertex of the detected cycle.
+ * @return bool Returns true if a cycle is found, false otherwise.
+ */
 bool Algorithms::DFSUtil(const Graph &g, int v, std::vector<bool> &visited, std::vector<int> &parent, int &cycleStart, int &cycleEnd) {
     visited[v] = true;
 
@@ -272,8 +345,15 @@ bool Algorithms::DFSUtil(const Graph &g, int v, std::vector<bool> &visited, std:
     return false;
 }
 
-// Checks if the graph contains a cycle using Depth-First Search (DFS).
-// Returns the cycle as a string or "0" if no cycle is found.
+/**
+ * @brief Checks if the graph contains a cycle using Depth-First Search (DFS).
+ *
+ * This function detects cycles in a graph and returns the cycle as a string.
+ * If no cycle is found, it returns "0".
+ *
+ * @param g The graph to be checked.
+ * @return std::string The cycle in the graph as a string in the format "0->1->2". Returns "0" if no cycle is found.
+ */
 std::string Algorithms::isContainsCycle(const Graph &g) {
     std::vector<bool> visited(g.getVertexNum(), false);
     std::vector<int> parent(g.getVertexNum(), -1);
@@ -310,8 +390,19 @@ std::string Algorithms::isContainsCycle(const Graph &g) {
     }
 }
 
-// Utility function for Breadth-First Search (BFS) to check if the graph is bipartite.
-// Colors the graph and returns true if bipartite, false otherwise.
+/**
+ * @brief Utility function for Breadth-First Search (BFS) to check if the graph is bipartite.
+ *
+ * This function checks if a graph can be colored with two colors such that no two adjacent vertices
+ * share the same color, indicating that the graph is bipartite.
+ *
+ * @param g The graph to be checked.
+ * @param src The source vertex from which BFS starts.
+ * @param colors A vector tracking the color assigned to each vertex.
+ * @param setA A vector tracking the vertices in set A of the bipartite graph.
+ * @param setB A vector tracking the vertices in set B of the bipartite graph.
+ * @return bool Returns true if the graph is bipartite, false otherwise.
+ */
 bool Algorithms::BFSUtil(const Graph &g, int src, std::vector<int> &colors, std::vector<int> &setA, std::vector<int> &setB) {
     std::queue<int> q;
     q.push(src);
@@ -341,10 +432,15 @@ bool Algorithms::BFSUtil(const Graph &g, int src, std::vector<int> &colors, std:
     return true;
 }
 
-
-
-// Checks if the graph is bipartite using Breadth-First Search (BFS).
-// Returns the sets as a string or "0" if not bipartite.
+/**
+ * @brief Checks if the graph is bipartite using Breadth-First Search (BFS).
+ *
+ * This function determines if a graph is bipartite by trying to color it with two colors.
+ * It returns the sets A and B of the bipartite graph if it is bipartite, or "0" if it is not.
+ *
+ * @param g The graph to be checked.
+ * @return std::string A string representation of the bipartite sets A and B. Returns "0" if the graph is not bipartite.
+ */
 std::string Algorithms::isBipartite(const Graph &g) {
     std::vector<int> colors(g.getVertexNum(), -1); // Initialize all vertices as not colored
     std::vector<int> setA, setB;
@@ -377,8 +473,15 @@ std::string Algorithms::isBipartite(const Graph &g) {
     return result.str();
 }
 
-// Checks for the presence of negative weight cycles using the Bellman-Ford algorithm.
-// Returns the cycle as a string or "0" if no cycle is found.
+/**
+ * @brief Checks for the presence of negative weight cycles using the Bellman-Ford algorithm.
+ *
+ * This function detects negative weight cycles in a graph. If such a cycle is found, it returns the cycle as a string.
+ * If no cycle is found, it returns "0".
+ *
+ * @param g The graph to be checked.
+ * @return std::string The negative weight cycle in the graph as a string in the format "0->1->2". Returns "0" if no cycle is found.
+ */
 std::string Algorithms::negativeCycle(const Graph &g) {
     std::stringstream ss;
     int V = g.getVertexNum();
