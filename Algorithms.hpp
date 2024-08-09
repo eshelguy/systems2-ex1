@@ -16,4 +16,5 @@ namespace Algorithms{
     std::string BellmanFordShortestPath(const Graph &g, int start, int end);
     bool BFSUtil(const Graph &g, int src, std::vector<int> &colors, std::vector<int> &setA, std::vector<int> &setB);
     bool DFSUtil(const Graph &g, int v, std::vector<bool> &visited, std::vector<int> &parent, int &cycleStart, int &cycleEnd);
-    }
+    void relaxEdges(const Graph &g, std::vector<int> &dist, std::vector<int> &parent);
+}
