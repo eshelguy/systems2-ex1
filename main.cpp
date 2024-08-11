@@ -1,4 +1,4 @@
-//guyes134@gmail.com
+//mail: guyes134@gmail.com
 
 #include <string>
 #include <vector>
@@ -163,6 +163,3 @@ int main() {
 
     g.loadGraph(matrix1);
     cout << Algorithms::negativeCycle(g) << endl;
-
-    return 0;
-}
