@@ -1,4 +1,5 @@
-//guyes134@gmail.com
+##mail: guyes134@gmail.com
+
 
 CXX = clang++
 CXXFLAGS = -std=c++11 -Wall -Wextra
@@ -35,4 +36,4 @@ Test.o: Test.cpp $(DEPS)
 
 # Rule to clean the build
 clean:
-	rm -f $(OBJS_MAIN) $(OBJS_TEST) $(TARGET_MAIN) $(TARGET_TEST)
+	rm -f $(OBJS_MAIN) $(OBJS_TEST) $(TARGET_MAIN) $(TARGET_TEST) main
